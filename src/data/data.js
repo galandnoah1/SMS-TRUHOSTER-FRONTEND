@@ -277,7 +277,7 @@ export const payments = [
         studentClass: students[0].classe,
         amount: 25000,
         fees_types: fees_types[0],
-        date: new Date()
+        date: new Date().toDateString()
     },
     {
         id: crypto.randomUUID(),
@@ -286,6 +286,7 @@ export const payments = [
         studentClass: students[1].classe,
         amount: 75000,
         fees_types: fees_types[1],
-        date: new Date()
+        date: new Date().toDateString()
     }
 ]
+
