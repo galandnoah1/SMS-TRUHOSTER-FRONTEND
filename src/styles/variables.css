@@ -1,0 +1,24 @@
+:root
+{
+    --green-50: #f0fdf4;
+    --green-100: #dcfce7;
+    --green-200: #bbf7d0;
+    --bg-color: #f4f7f5;
+    --sidebar-color: #ffffff;
+    --card: #ffffff;
+    --text: #1a2332;
+    --text-2: #4a5568;
+    --text-3: #94a3b8;
+    --border: #e8edf2;
+    --border-2: #d0d9e0;
+    --sidebar-width: 260px;
+    --sidebar-width-collapsed: 72px;
+    --navbar-height: 64px;
+    --radius-small: 8px;
+    --radius-medium: 12px;
+    --radius-large: 16px;
+    --radius-xlarge: 20px;
+    --shadow: 0 1px 3px rgba(0, 0, 0, .06);
+    --shadow-2: 0 4px 16px rgba(0, 0, 0, .08);
+    --shadow-3: 0 8px 32px rgba(0,0,0, .1);
+}
