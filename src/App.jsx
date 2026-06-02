@@ -1,12 +1,12 @@
+import DashBoardLayout from "./layouts/DashBoardLayout";
 
-import SideBar from "./layouts/SideBar";
 
 
 function App()
 {
   return (
     <>
-      <SideBar />
+      <DashBoardLayout />
     </>
   );
 }

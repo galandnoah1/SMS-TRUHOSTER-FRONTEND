@@ -290,3 +290,28 @@ export const payments = [
     }
 ]
 
+
+
+export const notifications = [
+    {
+        id: crypto.randomUUID(),
+        title: "Paiement de la premiere tranche",
+        content: null,
+        redirect_to: null,
+        read: false
+    },
+     {
+        id: crypto.randomUUID(),
+        title: "Remise des bulletions",
+        content: null,
+        redirect_to: null,
+        read: false
+    },
+     {
+        id: crypto.randomUUID(),
+        title: "Notes de la premiere sequence",
+        content: null,
+        redirect_to: null,
+        read: true
+    }
+]
