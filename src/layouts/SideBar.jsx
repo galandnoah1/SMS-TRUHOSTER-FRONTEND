@@ -16,6 +16,9 @@ import { pages_map, users } from "../data/data";
 // import { useAuth } from "../context/AuthProvider";
 import { useState } from "react";
 
+
+import './SideBar.css'
+
 export default function SideBar() {
 
   const nav_items = [
@@ -85,7 +88,7 @@ export default function SideBar() {
 
 //   const [user, logout] = useAuth()
 
-    let collapsed = false
+    const [collapsed, setCollapsed] = useState(false)
     const [user, setUser] = useState(users[0])
 
     const [page, setPage] = useState(pages_map.HOME)
