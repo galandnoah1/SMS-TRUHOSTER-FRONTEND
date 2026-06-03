@@ -1,5 +1,5 @@
 
-import {  GraduationCap,  History,  School,  Users2 } from "lucide-react";
+import {  GraduationCap,  History,  Layers,  School,  Users2 } from "lucide-react";
 import { classes, history, students, teachers } from "../data/data";
 import './HomePage.css'
 
@@ -13,7 +13,7 @@ export default function HomePage()
             value: students.length
         },
         {
-            icon: School,
+            icon: Layers,
             color: "#8B5CF6",
             label: "Classes",
             value: classes.length
@@ -44,7 +44,7 @@ export default function HomePage()
                     {
                         statistques.map(stat => (
                         <div className="stat-card" key={stat.label}>
-                            <stat.icon  className="stat-icon" color={stat.color}/>
+                            <stat.icon  className="stat-icon"  opacity={.35}/>
                           <div className="stat-info">
                             <div className="stat-label">
                                 {stat.label}

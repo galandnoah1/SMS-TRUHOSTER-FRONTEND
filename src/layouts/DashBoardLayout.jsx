@@ -4,13 +4,15 @@ import './DashBoardLayout.css'
 import Navbar from "./Navbar";
 
 
-export default function DashBoardLayout({children})
+export default function DashBoardLayout({children, navigate})
 {
     const [collapsed, setCollapsed] = useState(false)
 
     return (
         <div className="layout">
-            <SideBar />
+            <SideBar
+                navigate= {navigate}
+            />
 
             <div className={`main-wrap${collapsed ? " collapsed" : ""}`}>
                 <Navbar />

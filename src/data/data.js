@@ -1,7 +1,7 @@
 import getCurrentTime from "../utils/date"
 
 export const pages_map = {
-    HOME: "home",
+    HOME: "acceuil",
     STUDENTS: "students",
     CLASSES: "classes",
     GRADES: "grades",
@@ -15,12 +15,13 @@ export const pages_map = {
 
 
 export const sections = [
+    "",
     "anglophone",
     "francophone"
 ]
 
-export const levels = {
-    francophone: [
+export const levels = [
+        "",
         "6e",
         "5e",
         "4e",
@@ -28,36 +29,35 @@ export const levels = {
         "2nde",
         "1ere",
         "tle",
-
-    ],
-
-    anglophone: [
-        "form 1",
-        "form 2",
-        "form 3",
-        "form 4",
-        "form 5",
-        "upper sixth",
-        "lower sixth"
+        "FORM 1",
+        "FORM 2",
+        "FORM 3",
+        "FORM 4",
+        "FORM 5",
+        "UPPER SIXTH",
+        "LOWER SIXTH"
     ]
-}
 
-export const series = {
-    francophone: [
-        "A",
+
+export const series = [
+        "",
+        "A4",
         "D",
         "C",
-    ],
-
-    anglophone: [
         "ART",
         "SC",
-    ]
-}
+]
 
 export const lv2 = [
-    "esp",
-    "all"
+    "",
+    "ALL",
+    "ESP"
+]
+
+export const repartitions = [
+    "",
+    "A",
+    "B"
 ]
 
 export const subjects = {
@@ -116,7 +116,7 @@ export const classes = [
         niveau: "1ere",
         serie: "c",
         lv2: null,
-        section: sections[1],
+        section: sections[2],
         nom: "1ere C",
         effectif: 10
     },
@@ -125,17 +125,17 @@ export const classes = [
         niveau: "tle",
         serie: "a4",
         lv2: "all",
-        section: sections[1],
+        section: sections[2],
         nom: "Tle A4 All",
         effectif: 14,
     },
     {
         id: crypto.randomUUID(),
-        niveau: "form 2",
+        niveau: "FORM 2",
         serie: null,
         lv2: null,
-        section: sections[0],
-        nom: "Form 2",
+        section: sections[1],
+        nom: "FORM 2",
         effectif: 10,
     },
 ]
@@ -168,11 +168,11 @@ export const students = [
         nom: "Anama",
         prenom: "Joseph",
         matricule: "MD785",
-        niveau: "form 1",
+        niveau: "FORM 1",
         serie: null,
         sexe: null,
-        classe: "form 1",
-        section: sections[0]
+        classe: "FORM 1",
+        section: sections[2]
     }
 ]
 

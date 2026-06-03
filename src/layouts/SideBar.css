@@ -12,6 +12,7 @@
     transition: width .25s ease;
     z-index: 100;
     overflow: hidden;
+    background-color: var(--card);
 }
 
 
@@ -115,6 +116,13 @@
 }
 
 .sidebar-item:active
+{
+    background-color: var(--green-100);
+    color: var(--green-700);
+    font-weight: 600;
+}
+
+.sidebar-item.active
 {
     background-color: var(--green-100);
     color: var(--green-700);

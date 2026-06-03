@@ -1,0 +1,64 @@
+header
+{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+section
+{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.page-title
+{
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.page-sub
+{
+  font-size: 13px;
+  color: var(--text-3);
+  margin-top: 3px;
+}
+
+
+/***** SECTION TABS ******/
+.section-tabs
+{
+   display: flex;
+   gap: 5px;
+   flex-wrap: wrap;
+   margin-bottom: 20px;
+}
+
+.section-tabs > button
+{
+    border-radius: var(--radius-large) !important;
+    background-color: #fff;
+    color: var(--text);
+    border: 1px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+  
+}
+
+.section-tabs > button.active
+{
+     background-color: var(--green-600);
+    color: #fff;
+}
+
+.section-tabs > button.active.anglophone
+{
+    background: #2563eb;
+    border-color:#2563eb
+}

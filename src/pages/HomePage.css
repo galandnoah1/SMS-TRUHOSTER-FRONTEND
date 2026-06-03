@@ -75,9 +75,10 @@ section
 .stat-label
 {
     font-size: 15px;
-    color: var(--text-3);
+    color:var(--green-800);
     font-weight: 500;
     margin-bottom: 4px;
+    font-weight: 550;
 }
 
 .stat-value
@@ -100,7 +101,7 @@ section
     gap: 10px;
     border-radius: var(--radius-medium);
     height: 100%;
-    max-height: 340px;
+    max-height: 350px;
     overflow: auto;
 }
 
@@ -110,13 +111,26 @@ section
     display: flex;
     justify-content: space-between;
     align-items: start;
-
+    transition: all .24s ease;
+    padding: 5px 10px;
+    border-radius: 8px;
 }
 
 .history-item h3 
 {
-    font-weight: 550;
+    font-weight: 500;
     font-size: 15px;
+}
+
+.history-item:hover
+{
+   background-color: rgba(0, 0, 0, 0.1);
+   font-weight: bold;
+}
+
+.history-item:hover h3
+{
+    font-weight: bold;
 }
 
 .user

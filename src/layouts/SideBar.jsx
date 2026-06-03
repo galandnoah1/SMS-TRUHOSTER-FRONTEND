@@ -19,7 +19,7 @@ import { useState } from "react";
 
 import './SideBar.css'
 
-export default function SideBar() {
+export default function SideBar({navigate}) {
 
   const nav_items = [
     {
@@ -98,6 +98,7 @@ export default function SideBar() {
     }
 
 
+
     const user_initials = user ? user.nom.split(" ").map((word) => word[0]).join("").toUpperCase() : "AD"
 
   
@@ -124,8 +125,13 @@ export default function SideBar() {
                             {showSection && <div className="sidebar-section-label">{item.section}</div>}
 
                             <button 
-                                className={`sidebar-item ${page === item.page ? " active": ""}`}
-                                onClick={() => setPage(item.key)}
+                                className={`sidebar-item ${page === item.label.toLowerCase() ? " active": ""}`}
+                                onClick={() => {
+                                  
+                                  setPage(item.label.toLowerCase())
+                                  navigate(item.label.toLowerCase())
+                                   console.log(`${page == item.label.toLowerCase()}`);
+                                }}
                             >
                                 <item.icon size={18}/>
                                 <span>{item.label}</span>
