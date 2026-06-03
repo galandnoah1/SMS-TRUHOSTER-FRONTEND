@@ -1,3 +1,5 @@
+import getCurrentTime from "../utils/date"
+
 export const pages_map = {
     HOME: "home",
     STUDENTS: "students",
@@ -230,7 +232,6 @@ export const users = [
         role: ROLES[0],
         password: "admin123",
     },
-
     {
         id: crypto.randomUUID(),
         nom: "Anala",
@@ -314,4 +315,49 @@ export const notifications = [
         redirect_to: null,
         read: true
     }
+]
+
+export const history = [
+    {
+        id: crypto.randomUUID(),
+        title: "Inscription de l'eleve Mbarga Steven, en classe de Tle C",
+        user: users[1],
+        time: getCurrentTime(),
+        date: new Date().toLocaleDateString()
+    },
+    {
+        id: crypto.randomUUID(),
+        title: "Impression de 30 bulletins en classe de 6e B",
+        user: users[1],
+        time: getCurrentTime(),
+        date: new Date().toLocaleDateString()
+    },
+    {
+        id: crypto.randomUUID(),
+        title: "Paiement de la tranche 1 par l'eleve Mbarga Steve en classe de Tle C",
+        user: users[1],
+        time: getCurrentTime(),
+        date: new Date().toLocaleDateString()
+    },
+       {
+        id: crypto.randomUUID(),
+        title: "Inscription de l'eleve Mbarga Steven, en classe de Tle C",
+        user: users[1],
+        time: getCurrentTime(),
+        date: new Date().toLocaleDateString()
+    },
+    {
+        id: crypto.randomUUID(),
+        title: "Impression de 30 bulletins en classe de 6e B",
+        user: users[1],
+        time: getCurrentTime(),
+        date: new Date().toLocaleDateString()
+    },
+    {
+        id: crypto.randomUUID(),
+        title: "Paiement de la tranche 1 par l'eleve Mbarga Steve en classe de Tle C",
+        user: users[1],
+        time: getCurrentTime(),
+        date: new Date().toLocaleDateString()
+    },
 ]
