@@ -89,11 +89,9 @@ export default function ClassePage() {
                       </td>
 
                       <td>
-                        <Badge
-                          color={c.section == "anglophone" ? "blue" : "green"}
-                        >
-                          {c.section}
-                        </Badge>
+                        <span>
+                          {c.section.toUpperCase()}
+                        </span>
                       </td>
 
                       <td>

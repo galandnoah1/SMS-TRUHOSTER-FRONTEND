@@ -135,14 +135,14 @@ export const classes = [
         serie: null,
         lv2: null,
         section: sections[1],
-        nom: "FORM 2",
+        nom: "FORM 1",
         effectif: 10,
     },
 ]
 
 export const students = [
     {
-        id: crypto.randomUUID,
+        id: crypto.randomUUID(),
         nom: "Kamga",
         prenom: "Piere",
         matricule: "MD1203",
@@ -153,7 +153,7 @@ export const students = [
         section: sections[1]
     },
     {
-        id: crypto.randomUUID,
+        id: crypto.randomUUID(),
         nom: "Kenfack",
         prenom: "Hans",
         matricule: "MD1204",
@@ -164,7 +164,7 @@ export const students = [
         section: sections[1]
     },
     {
-        id: crypto.randomUUID,
+        id: crypto.randomUUID(),
         nom: "Anama",
         prenom: "Joseph",
         matricule: "MD785",

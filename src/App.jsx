@@ -3,6 +3,7 @@ import DashBoardLayout from "./layouts/DashBoardLayout";
 import ClassePage from "./pages/ClassePage";
 import HomePage from "./pages/HomePage";
 import './styles/global.css'
+import StudentPage from "./pages/StudentPage";
 
 
 
@@ -12,7 +13,8 @@ function App()
 
   const pages = {
     "acceuil": <HomePage />,
-    "classes": <ClassePage />
+    "classes": <ClassePage />,
+    "eleves": <StudentPage />
   }
 
   const [page, setPage] = useState("acceuil")
