@@ -1,10 +1,9 @@
 import { Layers, Plus, Trash2 } from "lucide-react";
 import "./ClassePage.css";
-import { classes, levels, lv2, repartitions, sections, series } from "../data/data";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EmptyState from "../components/EmptyState";
-import Badge from "../components/Badge";
 import Modal from "../components/Modal";
+import { classroomApi } from "../api/client";
 
 export default function ClassePage() {
   const [section_, setSection] = useState("");
@@ -14,18 +13,95 @@ export default function ClassePage() {
   const [modal, setModal] = useState(false);
 
   const [classForm, setClassForm] = useState({
-    niveau: "",
-    serie: "",
-    repartition: "",
-    lv2: "",
-    section: ""
+    name: "",
+    sectionId: 0,
+    levelId: 0,
+    studentCount: 0,
+    repartitionId: 0,
+    lv2_id: 0,
+    specialityId: 0,
   });
+
+  // From the server
+  const [errors, setErrors] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [levels, setLevels] = useState([]);
+  const [series, setSeries] = useState([]);
+  const [repartitions, setRepartitions] = useState([]);
+  const [lv2s, setLv2s] = useState([]);
+  const [sections, setSections] = useState([]);
+
+  const fetchClassrooms = async () => {
+    try {
+      const response = await classroomApi.getClassrooms();
+      setClasses(response.data.data);
+    } catch (error) {
+      setErrors((e) => [...e, error.message]);
+    }
+  };
+
+  const fetchLevels = async () => {
+    try {
+      const response = await classroomApi.getLevels();
+      setLevels(response.data.data);
+ 
+      
+    } catch (error) {
+      setErrors((e) => [...e, error.message]);
+    }
+  };
+
+  const fetchSections = async () => {
+    try {
+      const response = await classroomApi.getSections();
+      setSections(response.data.data);
+    } catch (error) {
+      setErrors((e) => [...e, error.message]);
+    }
+  }
+
+    const fetchLv2s = async () => {
+      try {
+        const response = await classroomApi.getLv2s();
+        setLv2s(response.data.data);
+      } catch (error) {
+        setErrors((e) => [...e, error.message]);
+      }
+    };
+
+    const fetchRepartitions = async () => {
+      try {
+        const response = await classroomApi.getRepartitions();
+        setRepartitions(response.data.data);
+      } catch (error) {
+        setErrors((e) => [...e, error.message]);
+      }
+    };
+
+    const fetchSpecialities = async () => {
+      try {
+        const response = await classroomApi.getSpecialities();
+        setSeries(response.data.data);
+      } catch (error) {
+        setErrors((e) => [...e, error.message]);
+      }
+    };
+  
+
+useEffect(() => {
+    fetchClassrooms()
+    fetchLevels();
+    fetchSections();
+    fetchSpecialities();
+    fetchLv2s();
+    fetchRepartitions();
+}, []);
 
   const filteredClasses = classes.filter((classe) => classe.section !== "");
 
   const addClasse = () => {
     console.log(classForm);
-    setModal(false)
+    setModal(false);
   };
 
   return (
@@ -51,11 +127,11 @@ export default function ClassePage() {
         <div className="section-tabs">
           {sections.map((section) => (
             <button
-              className={`btn small${section_ == section ? " active" : ""} ${section === "anglophone" ? " anglophone" : section != "" ? " fracophone" : ""}`}
-              key={section}
-              onClick={() => setSection(section)}
+              className={`btn small${section_.toLowerCase() == section.name.toLowerCase() ? " active" : ""} ${section.name.toLowerCase() === "anglophone" ? " anglophone" : " fracophone"}`}
+              key={section.id}
+              onClick={() => setSection(section.name.toLowerCase())}
             >
-              <span>{section === "" ? "Tout" : section}</span>
+              <span>{section.name.toLowerCase()}</span>
             </button>
           ))}
         </div>
@@ -75,35 +151,32 @@ export default function ClassePage() {
                     <th>Classe</th>
                     <th>Section</th>
                     <th>Effectif</th>
-                    <th>Actions</th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {filteredClasses.map((c) => (
-                    <tr key={c.id}>
+                  {filteredClasses.map((classe) => (
+                    <tr key={classe.id}>
                       <td>
                         <span style={{ fontWeight: 700, fontSize: 14 }}>
-                          {c.nom}
+                          {classe.name}
                         </span>
                       </td>
 
                       <td>
-                        <span>
-                          {c.section.toUpperCase()}
-                        </span>
+                        <span>{classe.section.toUpperCase()}</span>
                       </td>
 
                       <td>
                         <div style={{ display: "flex", alignItems: "center" }}>
-                          {c.effectif}
+                          {classe.studentCount}
                         </div>
                       </td>
 
                       <td>
                         <button
                           className="btn btn-danger btn-icon"
-                          onClick={() => setConfirm(c.id)}
+                          onClick={() => setConfirm(classe.id)}
                         >
                           <Trash2 size={15} />
                         </button>
@@ -132,99 +205,121 @@ export default function ClassePage() {
             </>
           }
         >
-           <>
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Niveau</label>
+          <>
+            <div className="form-row">
+              <div className="form-group">
+                <label className="form-label">Niveau</label>
 
-                  <select
-                    className="form-control"
-                    value={classForm.niveau}
-                    onChange={(e) =>
-                      setClassForm((prev) => ({
-                        ...prev,
-                        niveau: e.target.value,
-                      }))
-                    }
-                  >
-                    {levels.map((level) => (
-                      <option key={level}>{level}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Série</label>
-
-                  <select
-                    className="form-control"
-                    value={classForm.serie}
-                    onChange={(e) =>
-                      setClassForm((prev) => ({
-                        ...prev,
-                        serie: e.target.value,
-                      }))
-                    }
-                  >
-                    {series.map((s) => (
-                      <option key={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
+                <select
+                  className="form-control"
+                  value={classForm.levelId}
+                  onChange={(e) =>
+                    setClassForm((prev) => ({
+                      ...prev,
+                      levelId: e.target.value,
+                    }))
+                  }
+                >
+                  {levels.map((level) => (
+                    <option key={level.id} value={level.id}>
+                      {level.name.toUpperCase()}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">LV2</label>
+              <div className="form-group">
+                <label className="form-label">Serie</label>
 
-                  <select
-                    className="form-control"
-                    value={classForm.lv2}
-                    onChange={(e) =>
-                      setClassForm((prev) => ({ ...prev, lv2: e.target.value }))
-                    }
-                  >
-                    {lv2.map((lv) => (
-                      <option key={lv}>{lv}</option>
-                    ))}
-                  </select>
-                </div>
+                <select
+                  className="form-control"
+                  value={classForm.specialityId}
+                  onChange={(e) =>
+                    setClassForm((prev) => ({
+                      ...prev,
+                      specialityId: e.target.value,
+                    }))
+                  }
+                >
+                  <option>  </option>
+                  {series.map((serie) => (
+                    <option key={serie.id} value={serie.name}>
+                      {serie.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-                <div className="form-group">
-                  <label className="form-label">Section</label>
+            <div className="form-row">
+              <div className="form-group">
+                <label className="form-label">LV2</label>
 
-                  <select
-                    className="form-control"
-                    value={classForm.section}
-                    onChange={(e) =>
-                      setClassForm((prev) => ({ ...prev, section: e.target.value }))
-                    }
-                  >
-                    {sections.map((s) => (
-                      <option key={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
+                <select
+                  className="form-control"
+                  value={classForm.lv2_id}
+                  onChange={(e) =>
+                    setClassForm((prev) => ({
+                      ...prev,
+                      lv2_id: e.target.value,
+                    }))
+                  }
+                >
+                  <option>  </option>
+                  {lv2s.map((lv2) => (
+                    <option key={lv2.id} value={lv2.id}>
+                      {lv2.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Repartition</label>
+              <div className="form-group">
+                <label className="form-label">Section</label>
 
-                  <select
-                    className="form-control"
-                    value={classForm.repartition}
-                    onChange={(e) =>
-                      setClassForm((prev) => ({ ...prev, repartition: e.target.value }))
-                    }
-                  >
-                    {repartitions.map((r) => (
-                      <option key={r}>{r}</option>
-                    ))}
-                  </select>
-                </div>
+                <select
+                  className="form-control"
+                  value={classForm.sectionId}
+                  onChange={(e) =>
+                    setClassForm((prev) => ({
+                      ...prev,
+                      sectionId: e.target.value,
+                    }))
+                  }
+                >
+                  {sections.map((section) => (
+                    <option key={section.id} value={section.id}>
+                      {section.name}
+                    </option>
+                  ))}
+                </select>
               </div>
-            </>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label className="form-label">Repartition</label>
+
+                <select
+                  className="form-control"
+                  value={classForm.repartitionId}
+                  onChange={(e) =>
+                    setClassForm((prev) => ({
+                      ...prev,
+                      repartitionId: e.target.value,
+                    }))
+                  }
+                >
+                  <option>  </option>
+                  {repartitions.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </>
         </Modal>
       </main>
     </div>
