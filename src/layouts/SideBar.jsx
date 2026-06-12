@@ -117,12 +117,11 @@ export default function SideBar({navigate}) {
 
         <div className="sidebar-nav">
             {
-                nav_items.map((item, i) => {
-                    const prev = i > 0 ? nav_items[i-1] : null
-                    const showSection = item.section && item !== (prev?.section || "")
+                nav_items.map((item) => {
+
                     return (
                         <div key={item.key}>
-                            {showSection && <div className="sidebar-section-label">{item.section}</div>}
+                          
 
                             <button 
                                 className={`sidebar-item ${page === item.label.toLowerCase() ? " active": ""}`}
@@ -130,7 +129,7 @@ export default function SideBar({navigate}) {
                                   
                                   setPage(item.label.toLowerCase())
                                   navigate(item.label.toLowerCase())
-                                   console.log(`${page == item.label.toLowerCase()}`);
+                                  
                                 }}
                             >
                                 <item.icon size={18}/>
