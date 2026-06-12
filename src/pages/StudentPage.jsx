@@ -21,83 +21,71 @@ export default function StudentPage() {
   const [editData, setEditData] = useState(false);
 
   const [signUpForm, setSignUpForm] = useState({
-  "firstname": "",
-  "lastname": "",
-  "matricule": "",
-  "birthDate": "",
-  "birthPlace": "",
-  "sex": "",
-  "phone1": "",
-  "address": "",
-  "classId": "",
-  "redoublant": "",
-  "academicYearId": ""
-});
-
-  const saveStudent = async () => {
-    try {
-    console.log(signUpForm);
-    
-    const response = await studentApi.postStudent(signUpForm)
-
-    if(response.data.success)
-    {
-      setStudents(response.data.data)
-    }
-    else
-    {
-      console.log(response.data);
-      
-    }
-    
-  
-    setModal(false);
-      
-    } catch (error) {
-      setErrors((e) => [...e, error.message])
-      
-      
-    }
-  };
+    firstname: "",
+    lastname: "",
+    matricule: "",
+    birthDate: "",
+    birthPlace: "",
+    sex: "",
+    phone1: "",
+    address: "",
+    classId: "",
+    redoublant: "",
+    academicYearId: "",
+  });
 
   const selectRef = useRef(null);
-
-
-  
 
   // From the server
   const [errors, setErrors] = useState([]);
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
   const [sections, setSections] = useState([]);
-  const [academicyears, setAcademicyears] = useState([])
+  const [academicyears, setAcademicyears] = useState([]);
+
+  const deleteStudent = async (id) => {
+    try {
+      
+      const response = await studentApi.deleteStudent(id)
+
+      if(response.data.success)
+      {
+        console.log(`Suppression de l'eleve reussi`);
+        
+      }
+      else
+      {
+        setErrors(e => [...e, response.data])
+      }
+
+    } catch (error) {
+      console.log(error.message);
+      
+    }
+  }
 
   const fetchStudents = async () => {
     try {
-      const response = await studentApi.getStudents()
-      setStudents(response.data.data)
-
+      const response = await studentApi.getStudents();
+      setStudents(response.data.data);
     } catch (error) {
-      setErrors((e) => [...e, error.message])
+      setErrors((e) => [...e, error.message]);
     }
   };
 
   const fetchAcademicYears = async () => {
     try {
-      const response = await getAcademicyears()
-      setAcademicyears(response.data)
-
+      const response = await getAcademicyears();
+      setAcademicyears(response.data);
     } catch (error) {
-      setErrors((e) => [...e, error.message])
+      setErrors((e) => [...e, error.message]);
     }
-  }
+  };
 
   const fetchClassrooms = async () => {
     try {
       const response = await classroomApi.getClassrooms();
       setClasses(response.data.data);
-    
-      
     } catch (error) {
       setErrors((e) => [...e, error.message]);
     }
@@ -112,10 +100,28 @@ export default function StudentPage() {
     }
   };
 
+  const saveStudent = async () => {
+    try {
+      console.log(signUpForm);
+
+      const response = await studentApi.postStudent(signUpForm);
+
+      if (response.data.success) {
+        fetchStudents();
+      } else {
+        console.log(response.data);
+      }
+
+      setModal(false);
+    } catch (error) {
+      setErrors((e) => [...e, error.message]);
+    }
+  };
+
   useEffect(() => {
     fetchClassrooms();
     fetchStudents();
-    fetchSections()
+    fetchSections();
     fetchAcademicYears();
   }, []);
 
@@ -173,10 +179,11 @@ export default function StudentPage() {
               }}
             >
               <option>Toutes</option>
-              {classes
-                .map((classe) => (
-                  <option key={classe.id} value={classe.id}>{classe.name}</option>
-                ))}
+              {classes.map((classe) => (
+                <option key={classe.id} value={classe.id}>
+                  {classe.name}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -226,14 +233,12 @@ export default function StudentPage() {
                             fontSize: 11,
                             fontWeight: 700,
                             color: student.sex === "F" ? "#9d174d" : "#1e40af",
-                           
                           }}
-                        >
-                          
-                        </div>
+                        ></div>
                         <div>
                           <div style={{ fontWeight: 600, fontSize: 13.5 }}>
-                            {student.lastname.toUpperCase()} {student.firstname.toUpperCase()}
+                            {student.lastname.toUpperCase()}{" "}
+                            {student.firstname.toUpperCase()}
                           </div>
                         </div>
                       </div>
@@ -258,7 +263,7 @@ export default function StudentPage() {
                         </button>
                         <button
                           className="btn btn-danger btn-icon"
-                          onClick={() => setConfirm(student.id)}
+                          onClick={() => {deleteStudent(student.id)}}
                           title="Supprimer"
                         >
                           <Trash2 size={15} />
@@ -329,6 +334,7 @@ export default function StudentPage() {
                   setSignUpForm((f) => ({ ...f, sex: e.target.value }))
                 }
               >
+                <option value=""></option>
                 <option value="M">Masculin</option>
                 <option value="F">Feminin</option>
               </select>
@@ -339,16 +345,16 @@ export default function StudentPage() {
               <select
                 className="form-control"
                 value={signUpForm.classId}
-                onChange={(e) =>{
-                 
-                  
-                  setSignUpForm((f) =>
-                  ({...f, classId: e.target.value}))
-                  }
-                }
+                onChange={(e) => {
+                  setSignUpForm((f) => ({ ...f, classId: e.target.value }));
+                }}
               >
-                {classes.map((classe) => (<option key={classe.id} value="class1">{classe.name}</option>)
-                )}
+                <option value=""></option>
+                {classes.map((classe) => (
+                  <option key={classe.id} value={classe.id}>
+                    {classe.name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -362,8 +368,8 @@ export default function StudentPage() {
                 onChange={(e) =>
                   setSignUpForm((f) => ({ ...f, redoublant: e.target.value }))
                 }
-                
               >
+                <option value=""></option>
                 <option value={false}>Non</option>
                 <option value={true}>Oui</option>
               </select>
@@ -374,16 +380,19 @@ export default function StudentPage() {
               <select
                 className="form-control"
                 value={signUpForm.academicYearId}
-                onChange={(e) =>
-               {
+                onChange={(e) => {
                   setSignUpForm((f) => ({
                     ...f,
                     academicYearId: e.target.value,
-                  }))
-               }
-                }
+                  }));
+                }}
               >
-                {academicyears.map((year) => (<option key={year.id} value="year1">{year.name}</option>))}
+                <option value=""></option>
+                {academicyears.map((year) => (
+                  <option key={year.id} value={year.id}>
+                    {year.name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>

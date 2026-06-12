@@ -22,5 +22,6 @@ export const classroomApi = {
 
 export const studentApi = {
     getStudents: () => api.get("/api/v1/students"),
-    postStudent: (data) => api.post("/api/v1/students", data)
+    postStudent: (data) => api.post("/api/v1/students", data),
+    deleteStudent: (id) => api.delete(`/api/v1/students/${id}`)
 }
