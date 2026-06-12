@@ -1,52 +1,123 @@
-import { useRef, useState } from "react";
-import { classes, students } from "../data/data";
-import {
-  Users,
-  Trash2,
-  Edit3,
-  Search,
-  UserPlus2,
-  Save,
-  AlertCircle,
-} from "lucide-react";
-import Badge from "../components/Badge";
+import { useEffect, useRef, useState } from "react";
+import { Users, Trash2, Edit3, Search, UserPlus2, Save } from "lucide-react";
+import { classroomApi, getAcademicyears, studentApi } from "../api/client";
 import EmptyState from "../components/EmptyState";
-import { sections } from "../data/data";
 import Modal from "../components/Modal";
 import "./StudentPage.css";
 
 export default function StudentPage() {
   const [modal, setModal] = useState(false);
+
   const [section_, setSection] = useState("");
+
   const [search, setSearch] = useState("");
+
   const [edit, openEdit] = useState(false);
+
   const [confirm, setConfirm] = useState(false);
+
   const [filterClass, setFilterClass] = useState("");
-  const [editData, setEditData] = useState(true);
+
+  const [editData, setEditData] = useState(false);
+
   const [signUpForm, setSignUpForm] = useState({
-    prenom: "",
-    nom: "",
-    classe: "",
-    montant: "",
-  });
+  "firstname": "",
+  "lastname": "",
+  "matricule": "",
+  "birthDate": "",
+  "birthPlace": "",
+  "sex": "",
+  "phone1": "",
+  "address": "",
+  "classId": "",
+  "redoublant": "",
+  "academicYearId": ""
+});
 
-  const [errors, setErrors] = useState({
-    nom: "Le nom est obligatoire",
-    prenom: "Le prenom est obligatoire",
-    classe: "La classe est obligatoire",
-    montant: "Le montant est obligatoire",
-    sexe: "Le sexe est obligatoire",
-  });
+  const saveStudent = async () => {
+    try {
+    console.log(signUpForm);
+    
+    const response = await studentApi.postStudent(signUpForm)
 
-  const saveStudent = () => {
-    setSignUpForm(signUpForm)
-    setModal(false)
+    if(response.data.success)
+    {
+      setStudents(response.data.data)
+    }
+    else
+    {
+      console.log(response.data);
+      
+    }
+    
+  
+    setModal(false);
+      
+    } catch (error) {
+      setErrors((e) => [...e, error.message])
+      
+      
+    }
   };
+
   const selectRef = useRef(null);
-  let filtered = students.filter(
-    (s) =>
-      filterClass == "" || s.classe.toLowerCase() === filterClass.toLowerCase(),
-  );
+
+
+  
+
+  // From the server
+  const [errors, setErrors] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [sections, setSections] = useState([]);
+  const [academicyears, setAcademicyears] = useState([])
+
+  const fetchStudents = async () => {
+    try {
+      const response = await studentApi.getStudents()
+      setStudents(response.data.data)
+
+    } catch (error) {
+      setErrors((e) => [...e, error.message])
+    }
+  };
+
+  const fetchAcademicYears = async () => {
+    try {
+      const response = await getAcademicyears()
+      setAcademicyears(response.data)
+
+    } catch (error) {
+      setErrors((e) => [...e, error.message])
+    }
+  }
+
+  const fetchClassrooms = async () => {
+    try {
+      const response = await classroomApi.getClassrooms();
+      setClasses(response.data.data);
+    
+      
+    } catch (error) {
+      setErrors((e) => [...e, error.message]);
+    }
+  };
+
+  const fetchSections = async () => {
+    try {
+      const response = await classroomApi.getSections();
+      setSections(response.data.data);
+    } catch (error) {
+      setErrors((e) => [...e, error.message]);
+    }
+  };
+
+  useEffect(() => {
+    fetchClassrooms();
+    fetchStudents();
+    fetchSections()
+    fetchAcademicYears();
+  }, []);
 
   return (
     <div className="student-page">
@@ -72,11 +143,11 @@ export default function StudentPage() {
           <div className="section-tabs">
             {sections.map((section) => (
               <button
-                className={`btn small${section_ == section ? " active" : ""} ${section === "anglophone" ? " anglophone" : section != "" ? " fracophone" : ""}`}
-                key={section}
-                onClick={() => setSection(section)}
+                className={`btn small${section_ == section.name ? " active" : ""} ${section.name.toLowerCase() === "anglophone" ? " anglophone" : section.name.toLowerCase() != "" ? " fracophone" : ""}`}
+                key={section.id}
+                onClick={() => setSection(section.name)}
               >
-                <span>{section === "" ? "Tout" : section}</span>
+                <span>{section.name === "" ? "Tout" : section.name}</span>
               </button>
             ))}
           </div>
@@ -99,20 +170,18 @@ export default function StudentPage() {
                 setFilterClass(
                   e.target.value === "Toutes" ? "" : e.target.value,
                 );
-                console.log(filterClass);
               }}
             >
               <option>Toutes</option>
               {classes
-                .filter((c) => section_ === "" || c.section === section_)
-                .map((c) => (
-                  <option key={c.id}>{c.nom}</option>
+                .map((classe) => (
+                  <option key={classe.id} value={classe.id}>{classe.name}</option>
                 ))}
             </select>
           </div>
         </div>
 
-        {filtered.length === 0 ? (
+        {students.length === 0 ? (
           <EmptyState
             icon={Users}
             title="Aucun eleve trouve"
@@ -133,8 +202,8 @@ export default function StudentPage() {
               </thead>
 
               <tbody>
-                {filtered.map((s, i) => (
-                  <tr key={s.id}>
+                {students.map((student, i) => (
+                  <tr key={student.id}>
                     <td style={{ color: "#94a3b8", fontSize: 12 }}>{i + 1}</td>
                     <td>
                       <div
@@ -149,47 +218,47 @@ export default function StudentPage() {
                             width: 32,
                             height: 32,
                             borderRadius: "50%",
-                            background: s.sexe === "F" ? "#fce7f3" : "#dbeafe",
+                            background:
+                              student.sex === "F" ? "#fce7f3" : "#dbeafe",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             fontSize: 11,
                             fontWeight: 700,
-                            color: s.sexe === "F" ? "#9d174d" : "#1e40af",
-                            flexShrink: 0,
+                            color: student.sex === "F" ? "#9d174d" : "#1e40af",
+                           
                           }}
                         >
-                          {s.prenom[0]}
-                          {s.nom[0]}
+                          
                         </div>
                         <div>
                           <div style={{ fontWeight: 600, fontSize: 13.5 }}>
-                            {s.prenom} {s.nom}
+                            {student.lastname.toUpperCase()} {student.firstname.toUpperCase()}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <span>{s.matricule}</span>
+                      <span>{student.matricule}</span>
                     </td>
                     <td>
-                      <span>{s.classe.toUpperCase()}</span>
+                      <span>{student.classname}</span>
                     </td>
                     <td>
-                      <span>{s.sexe}</span>
+                      <span>{student.sex}</span>
                     </td>
                     <td>
                       <div className="table-actions">
                         <button
                           className="btn btn-ghost btn-icon"
-                          onClick={() => openEdit(s)}
+                          onClick={() => openEdit(student)}
                           title="Modifier"
                         >
                           <Edit3 size={15} />
                         </button>
                         <button
                           className="btn btn-danger btn-icon"
-                          onClick={() => setConfirm(s.id)}
+                          onClick={() => setConfirm(student.id)}
                           title="Supprimer"
                         >
                           <Trash2 size={15} />
@@ -206,7 +275,11 @@ export default function StudentPage() {
         <Modal
           open={modal}
           onClose={() => setModal(false)}
-          title={editData ? "Modifier l'élève" : "Inscrire un élève"}
+          title={
+            editData
+              ? "Modifier les informations de l'eleve"
+              : "Ajouter un eleve"
+          }
           footer={
             <>
               <button
@@ -228,32 +301,22 @@ export default function StudentPage() {
               <input
                 className="form-control"
                 placeholder="Nom de l'eleve"
-                value={signUpForm.nom}
+                value={signUpForm.lastname}
                 onChange={(e) =>
-                  setSignUpForm((f) => ({ ...f, nom: e.target.value }))
+                  setSignUpForm((f) => ({ ...f, lastname: e.target.value }))
                 }
               />
-              {errors.nom && (
-                <div className="form-error">
-                  {errors.nom}
-                </div>
-              )}
             </div>
             <div className="form-group">
-              <label className="form-label">Prenom(s)</label>
+              <label className="form-label">Prenom</label>
               <input
                 className="form-control"
                 placeholder="Prenom de l'eleve"
-                value={signUpForm.prenom}
+                value={signUpForm.firstname}
                 onChange={(e) =>
-                  setSignUpForm((f) => ({ ...f, prenom: e.target.value }))
+                  setSignUpForm((f) => ({ ...f, firstname: e.target.value }))
                 }
               />
-              {errors.prenom && (
-                <div className="form-error">
-                  {errors.prenom}
-                </div>
-              )}
             </div>
           </div>
           <div className="form-row">
@@ -261,52 +324,124 @@ export default function StudentPage() {
               <label className="form-label">Sexe</label>
               <select
                 className="form-control"
-                value={signUpForm.sexe}
+                value={signUpForm.sex}
                 onChange={(e) =>
-                  setSignUpForm((f) => ({ ...f, sexe: e.target.value }))
+                  setSignUpForm((f) => ({ ...f, sex: e.target.value }))
                 }
               >
                 <option value="M">Masculin</option>
-                <option value="F">Féminin</option>
+                <option value="F">Feminin</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Classe</label>
+              <select
+                className="form-control"
+                value={signUpForm.classId}
+                onChange={(e) =>{
+                 
+                  
+                  setSignUpForm((f) =>
+                  ({...f, classId: e.target.value}))
+                  }
+                }
+              >
+                {classes.map((classe) => (<option key={classe.id} value="class1">{classe.name}</option>)
+                )}
               </select>
             </div>
           </div>
-          <div className="form-group">
-            <label className="form-label">Classe</label>
-            <select
-              className="form-control"
-              value={signUpForm.classe}
-              onChange={(e) =>
-                setSignUpForm((f) => ({ ...f, classe: e.target.value }))
-              }
-            >
-              {classes.map((c) => (
-                <option key={c.id}>{c.nom}</option>
-              ))}
-            </select>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Redoublant</label>
+              <select
+                className="form-control"
+                value={signUpForm.redoublant}
+                onChange={(e) =>
+                  setSignUpForm((f) => ({ ...f, redoublant: e.target.value }))
+                }
+                
+              >
+                <option value={false}>Non</option>
+                <option value={true}>Oui</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Annee academique</label>
+              <select
+                className="form-control"
+                value={signUpForm.academicYearId}
+                onChange={(e) =>
+               {
+                  setSignUpForm((f) => ({
+                    ...f,
+                    academicYearId: e.target.value,
+                  }))
+               }
+                }
+              >
+                {academicyears.map((year) => (<option key={year.id} value="year1">{year.name}</option>))}
+              </select>
+            </div>
           </div>
-           <div className="form-group">
-              <label className="form-label">Montant</label>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">
+                Numero du pere/tuteur ou de la mere/tutrice
+              </label>
               <input
                 className="form-control"
-                placeholder="Montant de l'inscription"
-                value={signUpForm.montant}
-                type="number"
-                style={{
-                    appearance: "none"
-                }}
+                placeholder="Numero du pere/tuteur ou de la mere/tutrice"
+                value={signUpForm.phone1}
                 onChange={(e) =>
-                  setSignUpForm((f) => ({ ...f, montant: e.target.value }))
+                  setSignUpForm((f) => ({ ...f, phone1: e.target.value }))
                 }
               />
-              {
-                errors.montant && (
-                <div className="form-error">
-                  {errors.montant}
-                </div>
-                )
-              }
             </div>
+
+            <div className="form-group">
+              <label className="form-label">Lieu de residence</label>
+              <input
+                className="form-control"
+                placeholder="Lieu de residence"
+                value={signUpForm.address}
+                onChange={(e) =>
+                  setSignUpForm((f) => ({ ...f, address: e.target.value }))
+                }
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Date de naissance</label>
+              <input
+                className="form-control"
+                placeholder="Date de naissance"
+                type="date"
+                value={signUpForm.birthDate}
+                onChange={(e) =>
+                  setSignUpForm((f) => ({ ...f, birthDate: e.target.value }))
+                }
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Lieu de naissance</label>
+              <input
+                className="form-control"
+                placeholder="Lieu de naissance"
+                value={signUpForm.birthPlace}
+                onChange={(e) =>
+                  setSignUpForm((f) => ({ ...f, birthPlace: e.target.value }))
+                }
+              />
+            </div>
+          </div>
         </Modal>
       </main>
     </div>
