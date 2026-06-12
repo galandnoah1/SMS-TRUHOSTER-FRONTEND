@@ -44,8 +44,6 @@ export default function ClassePage() {
     try {
       const response = await classroomApi.getLevels();
       setLevels(response.data.data);
- 
-      
     } catch (error) {
       setErrors((e) => [...e, error.message]);
     }
@@ -58,51 +56,63 @@ export default function ClassePage() {
     } catch (error) {
       setErrors((e) => [...e, error.message]);
     }
-  }
+  };
 
-    const fetchLv2s = async () => {
-      try {
-        const response = await classroomApi.getLv2s();
-        setLv2s(response.data.data);
-      } catch (error) {
-        setErrors((e) => [...e, error.message]);
+  const fetchLv2s = async () => {
+    try {
+      const response = await classroomApi.getLv2s();
+      setLv2s(response.data.data);
+    } catch (error) {
+      setErrors((e) => [...e, error.message]);
+    }
+  };
+
+  const fetchRepartitions = async () => {
+    try {
+      const response = await classroomApi.getRepartitions();
+      setRepartitions(response.data.data);
+    } catch (error) {
+      setErrors((e) => [...e, error.message]);
+    }
+  };
+
+  const fetchSpecialities = async () => {
+    try {
+      const response = await classroomApi.getSpecialities();
+      setSeries(response.data.data);
+    } catch (error) {
+      setErrors((e) => [...e, error.message]);
+    }
+  };
+
+  const addClassroom = async () => {
+    try {
+      const response = await classroomApi.postClassroom(classForm);
+
+      if (response.data.success) {
+        fetchClassrooms()
+      } else {
+        console.log(response.data);
+
+        setErrors((e) => [...e, response.data]);
       }
-    };
 
-    const fetchRepartitions = async () => {
-      try {
-        const response = await classroomApi.getRepartitions();
-        setRepartitions(response.data.data);
-      } catch (error) {
-        setErrors((e) => [...e, error.message]);
-      }
-    };
+      setModal(false);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
-    const fetchSpecialities = async () => {
-      try {
-        const response = await classroomApi.getSpecialities();
-        setSeries(response.data.data);
-      } catch (error) {
-        setErrors((e) => [...e, error.message]);
-      }
-    };
-  
-
-useEffect(() => {
-    fetchClassrooms()
+  useEffect(() => {
+    fetchClassrooms();
     fetchLevels();
     fetchSections();
     fetchSpecialities();
     fetchLv2s();
     fetchRepartitions();
-}, []);
+  }, []);
 
   const filteredClasses = classes.filter((classe) => classe.section !== "");
-
-  const addClasse = () => {
-    console.log(classForm);
-    setModal(false);
-  };
 
   return (
     <div className="classe-page">
@@ -198,7 +208,7 @@ useEffect(() => {
               <button className="btn secondary" onClick={() => setModal(false)}>
                 Annuler
               </button>
-              <button className="btn primary" onClick={addClasse}>
+              <button className="btn primary" onClick={addClassroom}>
                 <Plus size={15} />
                 Ajouter
               </button>
@@ -220,6 +230,7 @@ useEffect(() => {
                     }))
                   }
                 >
+                  <option value=""></option>
                   {levels.map((level) => (
                     <option key={level.id} value={level.id}>
                       {level.name.toUpperCase()}
@@ -241,9 +252,9 @@ useEffect(() => {
                     }))
                   }
                 >
-                  <option>  </option>
+                  <option value=""></option>
                   {series.map((serie) => (
-                    <option key={serie.id} value={serie.name}>
+                    <option key={serie.id} value={serie.id}>
                       {serie.name}
                     </option>
                   ))}
@@ -265,7 +276,7 @@ useEffect(() => {
                     }))
                   }
                 >
-                  <option>  </option>
+                  <option value=""></option>
                   {lv2s.map((lv2) => (
                     <option key={lv2.id} value={lv2.id}>
                       {lv2.name}
@@ -287,6 +298,7 @@ useEffect(() => {
                     }))
                   }
                 >
+                  <option value=""></option>
                   {sections.map((section) => (
                     <option key={section.id} value={section.id}>
                       {section.name}
@@ -310,7 +322,7 @@ useEffect(() => {
                     }))
                   }
                 >
-                  <option>  </option>
+                  <option value=""></option>
                   {repartitions.map((r) => (
                     <option key={r.id} value={r.id}>
                       {r.name}
@@ -319,6 +331,20 @@ useEffect(() => {
                 </select>
               </div>
             </div>
+
+          
+              <div className="form-group">
+                <label className="form-label">Nom de la classe</label>
+                <input
+                  className="form-control"
+                  placeholder="Suivant le modele: Niveau [serie] [lv2] [repartition] "
+                  value={classForm.name}
+                  onChange={(e) =>
+                    setClassForm((f) => ({ ...f, name: e.target.value }))
+                  }
+                />
+              </div>
+         
           </>
         </Modal>
       </main>
